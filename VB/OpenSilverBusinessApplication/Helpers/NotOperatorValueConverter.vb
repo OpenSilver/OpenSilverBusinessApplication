@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Globalization
 Imports System.Windows.Data
 
 Namespace OpenSilverBusinessApplication
@@ -6,7 +7,8 @@ Namespace OpenSilverBusinessApplication
     ''' <summary>
     ''' Two way <see cref="IValueConverter"/> that lets you bind the inverse of a boolean property to a dependency property.
     ''' </summary>
-    Public Class NotOperatorValueConverter Inherits IValueConverter
+    Public Class NotOperatorValueConverter
+        Implements IValueConverter
 
         ''' <summary>
         ''' Converts the given <paramref name="value"/> to be its inverse.
@@ -16,8 +18,8 @@ Namespace OpenSilverBusinessApplication
         ''' <param name="parameter">Optional parameter (ignored).</param>
         ''' <param name="culture">The culture of the conversion (ignored).</param>
         ''' <returns>The inverse of the input <paramref name="value"/>.</returns>
-        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object
-            Return Not CType(value, Boolean) 
+        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.Convert
+            Return Not CType(value, Boolean)
         End Function
 
         ''' <summary>
@@ -28,8 +30,8 @@ Namespace OpenSilverBusinessApplication
         ''' <param name="parameter">Optional parameter (ignored).</param>
         ''' <param name="culture">The culture of the conversion (ignored).</param>
         ''' <returns>The inverse of the input <paramref name="value"/>.</returns>
-        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As System.Globalization.CultureInfo) As Object
-            Return Not CType(value, Boolean) 
+        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
+            Return Not CType(value, Boolean)
         End Function
 
     End Class

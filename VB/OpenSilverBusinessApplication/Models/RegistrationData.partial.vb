@@ -1,7 +1,6 @@
-﻿Imports OpenRiaServices.DomainServices.Client
+﻿Imports System.ComponentModel.DataAnnotations
+Imports OpenRiaServices.DomainServices.Client
 Imports OpenRiaServices.DomainServices.Client.ApplicationServices
-Imports System
-Imports System.ComponentModel.DataAnnotations
 
 Namespace OpenSilverBusinessApplication.Web
 
@@ -10,26 +9,26 @@ Namespace OpenSilverBusinessApplication.Web
     ''' </summary>
     Partial Public Class RegistrationData
 
-        Private currentOperation As OperationBase
+        Private _currentOperation As OperationBase
 
         ''' <summary>
         ''' Gets or sets a function that returns the password.
         ''' </summary>
-        Friend Property PasswordAccessor As Function(Of String)
+        Friend Property PasswordAccessor As Func(Of String)
 
         ''' <summary>
         ''' Gets and sets the password.
         ''' </summary>
-        <Required(ErrorMessage = "This field is required")>
-        <Display(Order = 3, Name = "Password", Description = "The password must be 7 characters long and must contain at least one special character e.g. @ or #")>
-        <RegularExpression("^.*<^a-zA-Z0-9>.*$", ErrorMessage = "A password needs to contain at least one special character e.g. @ or #")>
-        <StringLength(50, MinimumLength = 7, ErrorMessage = "Password must be at least 7 and at most 50 characters long")>
+        <Required(ErrorMessage:="This field is required")>
+        <Display(Order:=3, Name:="Password", Description:="The password must be 7 characters long and must contain at least one special character e.g. @ or #")>
+        <RegularExpression("^.*<^a-zA-Z0-9>.*$", ErrorMessage:="A password needs to contain at least one special character e.g. @ or #")>
+        <StringLength(50, MinimumLength:=7, ErrorMessage:="Password must be at least 7 and at most 50 characters long")>
         Public Property Password As String
             Get
                 If Me.PasswordAccessor Is Nothing Then
                     Return String.Empty
                 Else
-                    Return Me.PasswordAccessor()        
+                    Return Me.PasswordAccessor()()
                 End If
             End Get
             Set(ByVal value As String)
@@ -45,19 +44,19 @@ Namespace OpenSilverBusinessApplication.Web
         ''' <summary>
         ''' Gets or sets a function that returns the password confirmation.
         ''' </summary>
-        Friend Property PasswordConfirmationAccessor As Function(Of String)
+        Friend Property PasswordConfirmationAccessor As Func(Of String)
 
         ''' <summary>
         ''' Gets and sets the password confirmation string.
         ''' </summary>
-        <Required(ErrorMessage = "This field is required")>
-        <Display(Order = 4, Name = "Confirm password")>
+        <Required(ErrorMessage:="This field is required")>
+        <Display(Order:=4, Name:="Confirm password")>
         Public Property PasswordConfirmation As String
             Get
-                If Me.PasswordConfirmationAccessor Is Nothing Then 
+                If Me.PasswordConfirmationAccessor Is Nothing Then
                     Return String.Empty
                 Else
-                    Return Me.PasswordConfirmationAccessor()
+                    Return Me.PasswordConfirmationAccessor()()
                 End If
             End Get
             Set(ByVal value As String)
@@ -66,7 +65,7 @@ Namespace OpenSilverBusinessApplication.Web
 
                 ' Do not store the password in a private field as it should not be stored in memory in plain-text.
                 ' Instead, the supplied PasswordAccessor serves as the backing store for the value.
-                Me.RaisePropertyChanged("PasswordConfirmation")            
+                Me.RaisePropertyChanged("PasswordConfirmation")
             End Set
         End Property
 
@@ -75,35 +74,32 @@ Namespace OpenSilverBusinessApplication.Web
         ''' </summary>
         Friend Property CurrentOperation As OperationBase
             Get
-                Return Me.currentOperation
+                Return _currentOperation
             End Get
             Set(value As OperationBase)
 
-                If Me.currentOperation <> value Then
-                
-                    If Me.currentOperation IsNot Nothing
-                        RemoveHandler Me.currentOperation.Completed , AddressOf Sub(s, e) Me.CurrentOperationChanged()
-                    End If
-
-                    Me.currentOperation = value
-
-                    If Me.currentOperation IsNot Nothing
-                        AddHandler Me.currentOperation.Completed , AddressOf Sub(s, e) Me.CurrentOperationChanged()
-                    End If
-
-                    Me.CurrentOperationChanged()
+                If _currentOperation IsNot Nothing Then
+                    RemoveHandler _currentOperation.Completed, AddressOf CurrentOperationChanged
                 End If
-                
+
+                _currentOperation = value
+
+                If _currentOperation IsNot Nothing Then
+                    AddHandler _currentOperation.Completed, AddressOf CurrentOperationChanged
+                End If
+
+                CurrentOperationChanged(Me, EventArgs.Empty)
+
             End Set
         End Property
 
         ''' <summary>
         ''' Gets a value indicating whether the user is presently being registered or logged in.
         ''' </summary>
-        <Display(AutoGenerateField = false)>
-        Public Property IsRegistering As Boolean       
-            Get            
-                Return Me.CurrentOperation IsNot Nothing AndAlso Not Me.CurrentOperation.IsComplete
+        <Display(AutoGenerateField:=False)>
+        Public ReadOnly Property IsRegistering As Boolean
+            Get
+                Return _currentOperation IsNot Nothing AndAlso Not _currentOperation.IsComplete
             End Get
         End Property
 
@@ -111,7 +107,7 @@ Namespace OpenSilverBusinessApplication.Web
         ''' Helper method for when the current operation changes.
         ''' Used to raise appropriate property change notifications.
         ''' </summary>
-        Private Sub CurrentOperationChanged()
+        Private Sub CurrentOperationChanged(sender As Object, e As EventArgs)
             Me.RaisePropertyChanged("IsRegistering")
         End Sub
 
@@ -120,18 +116,18 @@ Namespace OpenSilverBusinessApplication.Web
         ''' If they don't match, a validation error is added.
         ''' </summary>
         Private Sub CheckPasswordConfirmation()
-        
+
             ' If either of the passwords has not yet been entered, then don't test for equality between the fields.
             ' The Required attribute will ensure a value has been entered for both fields.
-            If String.IsNullOrWhiteSpace(Me.Password) AndAlso || String.IsNullOrWhiteSpace(Me.PasswordConfirmation)            
+            If String.IsNullOrWhiteSpace(Me.Password) OrElse String.IsNullOrWhiteSpace(Me.PasswordConfirmation) Then
                 Return
             End If
 
             ' If the values are different, then add a validation error with both members specified
-            If Me.Password <> Me.PasswordConfirmation           
+            If Me.Password <> Me.PasswordConfirmation Then
                 Me.ValidationErrors.Add(
                     New ValidationResult("Passwords do not match",
-                    New String() { "PasswordConfirmation", "Password" }))
+                    New String() {"PasswordConfirmation", "Password"}))
             End If
 
         End Sub
@@ -145,9 +141,9 @@ Namespace OpenSilverBusinessApplication.Web
         ''' Using the OnUserNameChanged method can lead to a premature call before the user has finished entering the value in the form.
         ''' </remarks>
         Friend Sub UserNameEntered(userName As String)
-        
+
             ' Auto-Fill FriendlyName to match UserName for new entities when there is not a friendly name specified
-            If String.IsNullOrWhiteSpace(Me.FriendlyName)
+            If String.IsNullOrWhiteSpace(Me.FriendlyName) Then
                 Me.FriendlyName = userName
             End If
 
@@ -159,7 +155,7 @@ Namespace OpenSilverBusinessApplication.Web
         Public Function ToLoginParameters() As LoginParameters
             Return New LoginParameters(Me.UserName, Me.Password, False, Nothing)
         End Function
-    
+
     End Class
-    
+
 End Namespace

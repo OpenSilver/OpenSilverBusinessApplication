@@ -1,87 +1,79 @@
-﻿using OpenRiaServices.DomainServices.Client.ApplicationServices;
-using OpenSilverBusinessApplication.Web;
-using System.ComponentModel;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Controls;
+﻿Imports OpenRiaServices.DomainServices.Client.ApplicationServices
+Imports OpenSilverBusinessApplication.Web
+Imports OpenSilverBusinessApplication.Web.OpenSilverBusinessApplication.Web
+Imports System.ComponentModel
+Imports System.Globalization
+Imports System.Windows
+Imports System.Windows.Controls
 
-namespace OpenSilverBusinessApplication.LoginUI
-{
-    /// <summary>
-    /// <see cref="UserControl"/> class that shows the current login status and allows login and logout.
-    /// </summary>
-    public partial class LoginStatus : UserControl
-    {
-        /// <summary>
-        /// Creates a new <see cref="LoginStatus"/> instance.
-        /// </summary>
-        public LoginStatus()
-        {
-            this.InitializeComponent();
+Namespace OpenSilverBusinessApplication.LoginUI
 
-            if (DesignerProperties.IsInDesignTool)
-            {
-                VisualStateManager.GoToState(this, "loggedOut", false);
-            }
-            else
-            {
-                this.DataContext = WebContext.Current;
-                WebContext.Current.Authentication.LoggedIn += this.Authentication_LoggedIn;
-                WebContext.Current.Authentication.LoggedOut += this.Authentication_LoggedOut;
-                this.UpdateLoginState();
-            }
-        }
+    ''' <summary>
+    ''' <see cref="UserControl"/> class that shows the current login status And allows login And logout.
+    ''' </summary>
+    Partial Public Class LoginStatus
+        Inherits UserControl
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoginRegistrationWindow loginWindow = new LoginRegistrationWindow();
-            loginWindow.Show();
-        }
+        ''' <summary>
+        ''' Creates a New <see cref="LoginStatus"/> instance.
+        ''' </summary>
+        Public Sub New()
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            WebContext.Current.Authentication.Logout(logoutOperation =>
-            {
-                if (logoutOperation.HasError)
-                {
-                    ErrorWindow.Show(logoutOperation.Error);
-                    logoutOperation.MarkErrorAsHandled();
-                }
-            }, /* userState */ null);
-        }
+            InitializeComponent()
 
-        private void Authentication_LoggedIn(object sender, AuthenticationEventArgs e)
-        {
-            this.UpdateLoginState();
-        }
+            If DesignerProperties.IsInDesignTool Then
+                VisualStateManager.GoToState(Me, "loggedOut", False)
+            Else
+                Me.DataContext = WebContext.Current
+                AddHandler WebContext.Current.Authentication.LoggedIn, AddressOf Authentication_LoggedIn
+                AddHandler WebContext.Current.Authentication.LoggedOut, AddressOf Authentication_LoggedOut
+                Me.UpdateLoginState()
+            End If
+        End Sub
 
-        private void Authentication_LoggedOut(object sender, AuthenticationEventArgs e)
-        {
-            this.UpdateLoginState();
-        }
+        Private Sub LoginButton_Click(sender As Object, e As RoutedEventArgs)
+            Dim loginWindow As LoginRegistrationWindow = New LoginRegistrationWindow()
+            loginWindow.Show()
+        End Sub
 
-        private void UpdateLoginState()
-        {
-            if (WebContext.Current.User.IsAuthenticated)
-            {
-                this.welcomeText.Text = string.Format(
+        Private Sub LogoutButton_Click(sender As Object, e As RoutedEventArgs)
+            'WebContext.Current.Authentication.Logout(LogoutOperation >=
+            '{
+            '    If(LogoutOperation.HasError)
+            '    {
+            '        ErrorWindow.Show(logoutOperation.Error)
+            'logoutOperation.MarkErrorAsHandled()
+            '    }
+            '}, /* userState */ null)
+        End Sub
+
+        Private Sub Authentication_LoggedIn(sender As Object, e As AuthenticationEventArgs)
+            Me.UpdateLoginState()
+        End Sub
+
+        Private Sub Authentication_LoggedOut(sender As Object, e As AuthenticationEventArgs)
+            Me.UpdateLoginState()
+        End Sub
+
+        Private Sub UpdateLoginState()
+
+            If WebContext.Current.User.IsAuthenticated Then
+                Me.welcomeText.Text = String.Format(
                     CultureInfo.CurrentUICulture,
                     "Welcome {0}",
-                    WebContext.Current.User.DisplayName);
-            }
-            else
-            {
-                this.welcomeText.Text = "authenticating...";
-            }
+                    WebContext.Current.User.DisplayName)
+            Else
+                Me.welcomeText.Text = "authenticating..."
+            End If
 
-            if (WebContext.Current.Authentication is WindowsAuthentication)
-            {
-                VisualStateManager.GoToState(this, "windowsAuth", true);
-            }
-            else
-            {
-                VisualStateManager.GoToState(this, (WebContext.Current.User.IsAuthenticated) ? "loggedIn" : "loggedOut", true);
-            }
-        }
-    }
-}
+            If TypeOf WebContext.Current.Authentication Is WindowsAuthentication Then
+                VisualStateManager.GoToState(Me, "windowsAuth", True)
+            Else
+                VisualStateManager.GoToState(Me, If(WebContext.Current.User.IsAuthenticated, "loggedIn", "loggedOut"), True)
+            End If
+
+        End Sub
+
+    End Class
+
+End Namespace

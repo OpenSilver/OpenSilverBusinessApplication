@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LinkedOpenRiaServerProject>..\OpenSilverBusinessApplication.Web\OpenSilverBusinessApplication.Web.csproj</LinkedOpenRiaServerProject>
+    <LinkedOpenRiaServerProject>..\OpenSilverBusinessApplication.Web\OpenSilverBusinessApplication.Web.vbproj</LinkedOpenRiaServerProject>
     <RootNamespace>OpenSilverBusinessApplication.Web</RootNamespace>
   </PropertyGroup>
 
@@ -64,26 +64,6 @@
     </Content>    
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="App.xaml.vb" />
-    <Compile Include="Contexts\WebContext.vb" />
-    <Compile Include="Controls\BusyIndicator.vb" />
-    <Compile Include="Controls\VisualStates.vb" />
-    <Compile Include="Helpers\DataFieldExtensions.vb" />
-    <Compile Include="Helpers\NotOperatorValueConverter.vb" />
-    <Compile Include="Helpers\TargetNullValueConverter.vb" />
-    <Compile Include="MainPage.xaml.vb" />
-    <Compile Include="Models\LoginInfo.vb" />
-    <Compile Include="Models\RegistrationData.partial.vb" />
-    <Compile Include="Models\User.partial.vb" />
-    <Compile Include="Views\About.xaml.vb" />
-    <Compile Include="Views\ErrorWindow.xaml.vb" />
-    <Compile Include="Views\Home.xaml.vb" />
-    <Compile Include="Views\Login\LoginForm.xaml.vb" />
-    <Compile Include="Views\Login\LoginRegistrationWindow.xaml.vb" />
-    <Compile Include="Views\Login\LoginStatus.xaml.vb" />
-    <Compile Include="Views\Login\RegistrationForm.xaml.vb" />
-  </ItemGroup>
   <ItemGroup>
     <Folder Include="Generated_Code\" />
   </ItemGroup>

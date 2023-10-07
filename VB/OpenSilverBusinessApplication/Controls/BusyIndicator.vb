@@ -9,14 +9,15 @@ Namespace OpenSilverBusinessApplication.Controls
     ''' <summary>
     ''' A control to provide a visual indicator when an application is busy.
     ''' </summary>
-    <TemplateVisualState(Name = VisualStates.StateIdle, GroupName = VisualStates.GroupBusyStatus)>
-    <TemplateVisualState(Name = VisualStates.StateBusy, GroupName = VisualStates.GroupBusyStatus)>
-    <TemplateVisualState(Name = VisualStates.StateVisible, GroupName = VisualStates.GroupVisibility)>
-    <TemplateVisualState(Name = VisualStates.StateHidden, GroupName = VisualStates.GroupVisibility)>
-    <StyleTypedProperty(Property = "OverlayStyle", StyleTargetType = typeof(Rectangle))>
-    <StyleTypedProperty(Property = "ProgressBarStyle", StyleTargetType = typeof(ProgressBar))>
-    Public Class BusyIndicator Inherits ContentControl
-    
+    <TemplateVisualState(Name:=VisualStates.StateIdle, GroupName:=VisualStates.GroupBusyStatus)>
+    <TemplateVisualState(Name:=VisualStates.StateBusy, GroupName:=VisualStates.GroupBusyStatus)>
+    <TemplateVisualState(Name:=VisualStates.StateVisible, GroupName:=VisualStates.GroupVisibility)>
+    <TemplateVisualState(Name:=VisualStates.StateHidden, GroupName:=VisualStates.GroupVisibility)>
+    <StyleTypedProperty([Property]:="OverlayStyle", StyleTargetType:=GetType(Rectangle))>
+    <StyleTypedProperty([Property]:="ProgressBarStyle", StyleTargetType:=GetType(ProgressBar))>
+    Public Class BusyIndicator
+        Inherits ContentControl
+
         ''' <summary>
         ''' Gets or sets a value indicating whether the BusyContent is visible.
         ''' </summary>
@@ -31,7 +32,7 @@ Namespace OpenSilverBusinessApplication.Controls
         ''' Instantiates a new instance of the BusyIndicator control.
         ''' </summary>
         Public Sub New()
-            DefaultStyleKey = GetType(Obj) (BusyIndicator)
+            DefaultStyleKey = GetType(BusyIndicator)
             _displayAfterTimer = New DispatcherTimer()
             AddHandler _displayAfterTimer.Tick, AddressOf DisplayAfterTimerElapsed
         End Sub
@@ -96,15 +97,15 @@ Namespace OpenSilverBusinessApplication.Controls
                 SetValue(IsBusyProperty, value)
             End Set
         End Property
-        
+
         ''' <summary>
         ''' Identifies the IsBusy dependency property.
         ''' </summary>
         Public Shared ReadOnly IsBusyProperty As DependencyProperty = DependencyProperty.Register(
             "IsBusy",
-            GetType(bool),
+            GetType(Boolean),
             GetType(BusyIndicator),
-            New PropertyMetadata(False, New PropertyChangedCallback(OnIsBusyChanged)))
+            New PropertyMetadata(False, New PropertyChangedCallback(AddressOf OnIsBusyChanged)))
 
         ''' <summary>
         ''' IsBusyProperty property changed handler.
@@ -228,7 +229,7 @@ Namespace OpenSilverBusinessApplication.Controls
         ''' </summary>
         Property ProgressBarStyle As Style
             Get
-                REturn CType(GetValue(ProgressBarStyleProperty), Style;
+                Return CType(GetValue(ProgressBarStyleProperty), Style)
             End Get
             Set(value As Style)
                 SetValue(ProgressBarStyleProperty, value)

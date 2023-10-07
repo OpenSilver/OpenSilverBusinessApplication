@@ -3,9 +3,10 @@ Imports System.Windows.Navigation
 
 Namespace OpenSilverBusinessApplication.Views
 
-    Partial Public Class Home Inherits Page
-    
-        Public Sub New()        
+    Partial Public Class Home
+        Inherits Page
+
+        Public Sub New()
             InitializeComponent()
         End Sub
 

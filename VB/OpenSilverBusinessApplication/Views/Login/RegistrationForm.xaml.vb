@@ -1,6 +1,7 @@
 ﻿Imports OpenRiaServices.DomainServices.Client
 Imports OpenRiaServices.DomainServices.Client.ApplicationServices
 Imports OpenSilverBusinessApplication.Web
+Imports OpenSilverBusinessApplication.Web.OpenSilverBusinessApplication.Web
 Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel.DataAnnotations
@@ -13,11 +14,12 @@ Namespace OpenSilverBusinessApplication.LoginUI
     ''' <summary>
     ''' Form that presents the <see cref="RegistrationData"/> and performs the registration process.
     ''' </summary>
-    Partial Public Class RegistrationForm Inherits StackPanel
-    
-        Private parentWindow As LoginRegistrationWindow 
+    Partial Public Class RegistrationForm
+        Inherits StackPanel
+
+        Private parentWindow As LoginRegistrationWindow
         Private registrationData As RegistrationData = New RegistrationData()
-        Private userRegistrationContext As UserRegistrationContext  = New UserRegistrationContext()
+        Private userRegistrationContext As UserRegistrationContext = New UserRegistrationContext()
         Private userNameTextBox As TextBox
 
         ''' <summary>
@@ -49,19 +51,19 @@ Namespace OpenSilverBusinessApplication.LoginUI
             Select Case e.PropertyName
                 Case "UserName"
                     Me.userNameTextBox = CType(e.Field.Content, TextBox)
-                    AddHandler Me.userNameTextBox.LostFocus AddressOf Me.UserNameLostFocus
+                    AddHandler Me.userNameTextBox.LostFocus, AddressOf Me.UserNameLostFocus
                 Case "Password"
                     Dim passwordBox As PasswordBox = New PasswordBox()
                     e.Field.ReplaceTextBox(passwordBox, PasswordBox.PasswordProperty)
                     Me.registrationData.PasswordAccessor = Function() passwordBox.Password
                 Case "PasswordConfirmation"
-                    passwordConfirmationBox As PasswordBox = New PasswordBox()
+                    Dim passwordConfirmationBox As PasswordBox = New PasswordBox()
                     e.Field.ReplaceTextBox(passwordConfirmationBox, PasswordBox.PasswordProperty)
                     Me.registrationData.PasswordConfirmationAccessor = Function() passwordConfirmationBox.Password
                 Case "Question"
-                    Dim questionComboBox As ComboBox = new ComboBox()
+                    Dim questionComboBox As ComboBox = New ComboBox()
                     questionComboBox.ItemsSource = RegistrationForm.GetSecurityQuestions()
-                    e.Field.ReplaceTextBox(questionComboBox, ComboBox.SelectedItemProperty, Sub(binding) binding.Converter = new TargetNullValueConverter())
+                    e.Field.ReplaceTextBox(questionComboBox, ComboBox.SelectedItemProperty, Sub(binding) binding.Converter = New TargetNullValueConverter())
             End Select
 
         End Sub
@@ -73,16 +75,15 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' <param name="sender">The event sender.</param>
         ''' <param name="e">The event arguments.</param>
         Private Sub UserNameLostFocus(sender As Object, e As RoutedEventArgs)
-            Me.registrationData.UserNameEntered((CType(sender,TextBox)).Text)
+            Me.registrationData.UserNameEntered((CType(sender, TextBox)).Text)
         End Sub
 
         ''' <summary>
         ''' Returns a list of the resource strings defined in <see cref="SecurityQuestions" />.
         ''' </summary>
-        Private Shared Function GetSecurityQuestions() As IEnumerable(Of string)
+        Private Shared Function GetSecurityQuestions() As IEnumerable(Of String)
 
-            Return New String()
-            {
+            Return New String() {
                 "What is the name of your favorite childhood friend?",
                 "What was your childhood nickname?",
                 "What was the color of your first car?",
@@ -102,7 +103,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' Submit the new registration.
         ''' </summary>
         Private Sub RegisterButton_Click(sender As Object, e As RoutedEventArgs)
-       
+
             ' We need to force validation since we are not using the standard OK button from the DataForm.
             ' Without ensuring the form is valid, we would get an exception invoking the operation if the entity is invalid.
             If Me.registerForm.ValidateItem() Then
@@ -110,7 +111,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
                 Me.registrationData.CurrentOperation = Me.userRegistrationContext.CreateUser(
                     Me.registrationData,
                     Me.registrationData.Password,
-                    Me.RegistrationOperation_Completed, 
+                    Me.RegistrationOperation_Completed,
                     Nothing)
 
                 Me.parentWindow.AddPendingOperation(Me.registrationData.CurrentOperation)
@@ -132,7 +133,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
                     operation.MarkErrorAsHandled()
                     Return
                 End If
-                
+
                 Select Case operation.Value
                     Case CreateUserStatus.Success
                         Me.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(Me.registrationData.ToLoginParameters(), Me.LoginOperation_Completed, Nothing)
@@ -140,11 +141,11 @@ Namespace OpenSilverBusinessApplication.LoginUI
                     Case CreateUserStatus.DuplicateUserName
                         Me.registrationData.ValidationErrors.Add(
                             New ValidationResult("User name already exists. Please enter a different user name.",
-                            New String()) { "UserName" }))
+                            New String() {"UserName"}))
                     Case CreateUserStatus.DuplicateEmail
                         Me.registrationData.ValidationErrors.Add(
                             New ValidationResult("A user name for that e-mail address already exists. Please enter a different e-mail address.",
-                            New String()) { "Email" }))
+                            New String() {"Email"}))
                     Case Else
                         ErrorWindow.Show("An unknown error has occurred. Please contact your administrator for help.")
                 End Select
@@ -160,18 +161,18 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' <param name="loginOperation">The <see cref="LoginOperation"/> that has completed.</param>
         Private Sub LoginOperation_Completed(loginOperation As LoginOperation)
 
-            If Not loginOperation.IsCanceled
+            If Not loginOperation.IsCanceled Then
 
                 Me.parentWindow.DialogResult = True
 
                 If loginOperation.HasError Then
-                    ErrorWindow.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture,
+                    ErrorWindow.Show(String.Format(System.Globalization.CultureInfo.CurrentUICulture,
                         "Registration was successful but there was a problem while trying to log in with your credentials: {0}",
                         loginOperation.Error.Message))
                     loginOperation.MarkErrorAsHandled()
-                Else If Not loginOperation.LoginSuccess Then
+                ElseIf Not loginOperation.LoginSuccess Then
                     ' The operation was successful, but the actual login was not
-                    ErrorWindow.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture,
+                    ErrorWindow.Show(String.Format(System.Globalization.CultureInfo.CurrentUICulture,
                         "Registration was successful but there was a problem while trying to log in with your credentials: {0}",
                         "The user name or password is incorrect"))
                 End If
@@ -193,7 +194,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' </summary>
         Private Sub CancelButton_Click(sender As Object, e As EventArgs)
 
-            If Me.registrationData.CurrentOperation IsNot Nothing AndAlso Me.registrationData.CurrentOperation.CanCancel
+            If Me.registrationData.CurrentOperation IsNot Nothing AndAlso Me.registrationData.CurrentOperation.CanCancel Then
                 Me.registrationData.CurrentOperation.Cancel()
             Else
                 Me.parentWindow.DialogResult = False
@@ -206,13 +207,13 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' </summary>
         Private Sub RegistrationForm_KeyDown(sender As Object, e As KeyEventArgs)
 
-            If e.Key = Key.Escape
+            If e.Key = Key.Escape Then
                 Me.CancelButton_Click(sender, e)
-            Else If e.Key = Key.Enter AndAlso Me.registerButton.IsEnabled
+            ElseIf e.Key = Key.Enter AndAlso Me.registerButton.IsEnabled Then
                 Me.RegisterButton_Click(sender, e)
             End If
 
-        End sub
+        End Sub
 
         ''' <summary>
         ''' Sets focus to the user name text box.
@@ -220,7 +221,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         Public Sub SetInitialFocus()
             Me.userNameTextBox.Focus()
         End Sub
-        
+
     End Class
 
 End Namespace

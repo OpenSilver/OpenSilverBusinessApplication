@@ -4,8 +4,9 @@ Imports System.Windows.Navigation
 
 Namespace OpenSilverBusinessApplication
 
-    Partial Public Class MainPage Inherits UserControl
-    
+    Partial Public Class MainPage
+        Inherits UserControl
+
         Public Sub New()
             InitializeComponent()
         End Sub

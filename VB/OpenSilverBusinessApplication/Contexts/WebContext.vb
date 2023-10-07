@@ -1,5 +1,4 @@
-﻿using OpenRiaServices.DomainServices.Client.ApplicationServices
-using System
+﻿Imports OpenRiaServices.DomainServices.Client.ApplicationServices
 
 Namespace OpenSilverBusinessApplication.Web
 
@@ -10,9 +9,10 @@ Namespace OpenSilverBusinessApplication.Web
     ''' This context extends the base to make application services and types available
     ''' for consumption from code and xaml.
     ''' </remarks>
-    Partial NotInheritable Class WebContext Inherits WebContextBase
-    
-        #Region "Extensibility Method Definitions"
+    Partial NotInheritable Class WebContext
+        Inherits WebContextBase
+
+#Region "Extensibility Method Definitions"
 
         ''' <summary>
         ''' This method is invoked from the constructor once initialization is complete and
@@ -21,7 +21,7 @@ Namespace OpenSilverBusinessApplication.Web
         Partial Private Sub OnCreated()
         End Sub
 
-        #End Region
+#End Region
 
         ''' <summary>
         ''' Initializes a new instance of the WebContext class.
@@ -38,19 +38,19 @@ Namespace OpenSilverBusinessApplication.Web
         ''' </exception>
         ''' <seealso cref="System.Windows.Application.ApplicationLifetimeObjects"/>
         ' TODO: Check if we can use Shadows
-        Shared Shadows Property Current As WebContext
+        Shared Shadows ReadOnly Property Current As WebContext
             Get
                 Return CType(WebContextBase.Current, WebContext)
             End Get
-        End Property       
+        End Property
 
         ''' <summary>
         ''' Gets a user representing the authenticated identity.
         ''' </summary>
         ' TODO: Check if we can use Shadows
-        Public Shadows Property User As User
+        Public Shadows ReadOnly Property User As User
             Get
-                Return CType(base.User, User)
+                Return CType(MyBase.User, User)
             End Get
         End Property
 
