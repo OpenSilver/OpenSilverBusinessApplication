@@ -28,9 +28,6 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Content Include="Assets\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Content>
