@@ -1,8 +1,7 @@
-﻿Imports System
+﻿Imports System.Runtime.CompilerServices
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Data
-Imports System.Runtime.CompilerServices
 
 Namespace OpenSilverBusinessApplication
 
@@ -10,7 +9,7 @@ Namespace OpenSilverBusinessApplication
     '''     Provides extension methods for performing operations on a <see cref="DataField"/>.
     ''' </summary>
     Module DataFieldExtensions
-    
+
         ''' <summary>
         ''' Replaces a <see cref="DataField" />'s <see cref="TextBox" /> control with another control and updates the bindings.
         ''' </summary>
@@ -33,7 +32,7 @@ Namespace OpenSilverBusinessApplication
         ''' </param>
         <Extension()>
         Public Sub ReplaceTextBox(field As DataField, newControl As FrameworkElement, dataBindingProperty As DependencyProperty, bindingSetupFunction As Action(Of Binding))
-        
+
             If field Is Nothing Then
                 Throw New ArgumentNullException(NameOf(field))
             End If
@@ -45,9 +44,7 @@ Namespace OpenSilverBusinessApplication
             ' Construct new binding by copying existing one, and sending it to bindingSetupFunction for any changes the caller wants to perform.
             Dim newBinding As Binding = field.Content.GetBindingExpression(TextBox.TextProperty).ParentBinding.CreateCopy()
 
-            If bindingSetupFunction IsNot Nothing Then
-                bindingSetupFunction(newBinding)
-            End If
+            bindingSetupFunction?(newBinding)
 
             ' Replace field
             newControl.SetBinding(dataBindingProperty, newBinding)
@@ -61,13 +58,13 @@ Namespace OpenSilverBusinessApplication
         ''' <param name="binding"><see cref="Binding"/> from which property values will be copied</param>
         ''' <returns>A new <see cref="Binding"/> object.</returns>
         <Extension()>
-        Private Shared Function CreateCopy(binding As Binding) As Binding
+        Private Function CreateCopy(binding As Binding) As Binding
 
             If binding Is Nothing Then
                 Throw New ArgumentNullException(NameOf(binding))
             End If
 
-            Dim newBinding As Binding = New Binding With {.BindsDirectlyToSource = binding.BindsDirectlyToSource,
+            Dim newBinding As New Binding With {.BindsDirectlyToSource = binding.BindsDirectlyToSource,
                 .Converter = binding.Converter,
                 .ConverterParameter = binding.ConverterParameter,
                 .ConverterCulture = binding.ConverterCulture,
@@ -77,9 +74,9 @@ Namespace OpenSilverBusinessApplication
                 .UpdateSourceTrigger = binding.UpdateSourceTrigger,
                 .ValidatesOnExceptions = binding.ValidatesOnExceptions}
 
-            If binding.ElementName IsNot Nothing
+            If binding.ElementName IsNot Nothing Then
                 newBinding.ElementName = binding.ElementName
-            Else If binding.RelativeSource IsNot Nothing
+            ElseIf binding.RelativeSource IsNot Nothing Then
                 newBinding.RelativeSource = binding.RelativeSource
             Else
                 newBinding.Source = binding.Source

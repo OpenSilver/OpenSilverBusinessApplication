@@ -1,47 +1,51 @@
 ﻿Imports System
 Imports System.Web
 
-Public Class OpenSilverBusinessApp
-    Inherits System.Web.HttpApplication
+Namespace OpenSilverBusinessApplication.Web
 
-    Sub Application_Start(sender As Object, e As EventArgs)
+    Public Class OpenSilverBusinessApp
+        Inherits System.Web.HttpApplication
 
-        Dim path As String = AppDomain.CurrentDomain.BaseDirectory
-        AppDomain.CurrentDomain.SetData("DataDirectory", path)
+        Sub Application_Start(sender As Object, e As EventArgs)
 
-    End Sub
+            Dim path As String = AppDomain.CurrentDomain.BaseDirectory
+            AppDomain.CurrentDomain.SetData("DataDirectory", path)
 
-    Sub Session_Start(sender As Object, e As EventArgs)
-    End Sub
+        End Sub
 
-    Sub Application_BeginRequest(sender As Object, e As EventArgs)
+        Sub Session_Start(sender As Object, e As EventArgs)
+        End Sub
 
-        HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*")
+        Sub Application_BeginRequest(sender As Object, e As EventArgs)
 
-        If HttpContext.Current.Request.HttpMethod = "OPTIONS" Then
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*")
 
-            ' These headers are handling the "pre-flight" OPTIONS call sent by the browser
-            With HttpContext.Current.Response
-                .AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-                .AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, SOAPAction")
-                .AddHeader("Access-Control-Max-Age", "1728000")
-                .End()
-            End With
+            If HttpContext.Current.Request.HttpMethod = "OPTIONS" Then
 
-        End If
+                ' These headers are handling the "pre-flight" OPTIONS call sent by the browser
+                With HttpContext.Current.Response
+                    .AddHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+                    .AddHeader("Access-Control-Allow-Headers", "Content-Type, Accept, SOAPAction")
+                    .AddHeader("Access-Control-Max-Age", "1728000")
+                    .End()
+                End With
 
-    End Sub
+            End If
 
-    Sub Application_AuthenticateRequest(sender As Object, e As EventArgs)
-    End Sub
+        End Sub
 
-    Sub Application_Error(sender As Object, e As EventArgs)
-    End Sub
+        Sub Application_AuthenticateRequest(sender As Object, e As EventArgs)
+        End Sub
 
-    Sub Session_End(sender As Object, e As EventArgs)
-    End Sub
+        Sub Application_Error(sender As Object, e As EventArgs)
+        End Sub
 
-    Sub Application_End(sender As Object, e As EventArgs)
-    End Sub
+        Sub Session_End(sender As Object, e As EventArgs)
+        End Sub
 
-End Class
+        Sub Application_End(sender As Object, e As EventArgs)
+        End Sub
+
+    End Class
+
+End Namespace

@@ -1,13 +1,10 @@
-﻿Imports OpenRiaServices.DomainServices.Client
-Imports OpenRiaServices.DomainServices.Client.ApplicationServices
-Imports OpenSilverBusinessApplication.Web
-Imports OpenSilverBusinessApplication.Web.OpenSilverBusinessApplication.Web
-Imports System
-Imports System.Collections.Generic
-Imports System.ComponentModel.DataAnnotations
+﻿Imports System.ComponentModel.DataAnnotations
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Input
+Imports OpenRiaServices.DomainServices.Client
+Imports OpenRiaServices.DomainServices.Client.ApplicationServices
+Imports OpenSilverBusinessApplication.Web
 
 Namespace OpenSilverBusinessApplication.LoginUI
 
@@ -111,7 +108,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
                 Me.registrationData.CurrentOperation = Me.userRegistrationContext.CreateUser(
                     Me.registrationData,
                     Me.registrationData.Password,
-                    Me.RegistrationOperation_Completed,
+                    AddressOf Me.RegistrationOperation_Completed,
                     Nothing)
 
                 Me.parentWindow.AddPendingOperation(Me.registrationData.CurrentOperation)
@@ -136,7 +133,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
 
                 Select Case operation.Value
                     Case CreateUserStatus.Success
-                        Me.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(Me.registrationData.ToLoginParameters(), Me.LoginOperation_Completed, Nothing)
+                        Me.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(Me.registrationData.ToLoginParameters(), AddressOf Me.LoginOperation_Completed, Nothing)
                         Me.parentWindow.AddPendingOperation(Me.registrationData.CurrentOperation)
                     Case CreateUserStatus.DuplicateUserName
                         Me.registrationData.ValidationErrors.Add(

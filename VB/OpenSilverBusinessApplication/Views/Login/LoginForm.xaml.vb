@@ -3,7 +3,7 @@ Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports OpenRiaServices.DomainServices.Client.ApplicationServices
-Imports OpenSilverBusinessApplication.Web.OpenSilverBusinessApplication.Web
+Imports OpenSilverBusinessApplication.Web
 
 Namespace OpenSilverBusinessApplication.LoginUI
 
@@ -33,7 +33,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' </summary>
         ''' <param name="window">The window to use as the parent.</param>
         Public Sub SetParentWindow(window As LoginRegistrationWindow)
-            Me.parentWindow = window
+            _parentWindow = window
         End Sub
 
         ''' <summary>
@@ -42,11 +42,11 @@ Namespace OpenSilverBusinessApplication.LoginUI
         Private Sub LoginForm_AutoGeneratingField(sender As Object, e As DataFormAutoGeneratingFieldEventArgs)
 
             If e.PropertyName = "UserName" Then
-                Me.userNameTextBox = CType(e.Field.Content, TextBox)
+                _userNameTextBox = CType(e.Field.Content, TextBox)
             ElseIf e.PropertyName = "Password" Then
                 Dim myPasswordBox As PasswordBox = New PasswordBox()
                 e.Field.ReplaceTextBox(myPasswordBox, PasswordBox.PasswordProperty)
-                Me.loginInfo.PasswordAccessor = Function() myPasswordBox.Password
+                _loginInfo.PasswordAccessor = Function() myPasswordBox.Password
             End If
         End Sub
 
@@ -59,8 +59,8 @@ Namespace OpenSilverBusinessApplication.LoginUI
             ' Without ensuring the form Is valid, we get an exception invoking the operation if the entity Is invalid.
             If Me.loginForm.ValidateItem() Then
 
-                Me.loginInfo.CurrentLoginOperation = WebContext.Current.Authentication.Login(Me.loginInfo.ToLoginParameters(), AddressOf Me.LoginOperation_Completed, Nothing)
-                Me.parentWindow.AddPendingOperation(Me.loginInfo.CurrentLoginOperation)
+                _loginInfo.CurrentLoginOperation = WebContext.Current.Authentication.Login(_loginInfo.ToLoginParameters(), AddressOf Me.LoginOperation_Completed, Nothing)
+                _parentWindow.AddPendingOperation(_loginInfo.CurrentLoginOperation)
             End If
         End Sub
 
@@ -73,12 +73,12 @@ Namespace OpenSilverBusinessApplication.LoginUI
         Private Sub LoginOperation_Completed(loginOperation As LoginOperation)
 
             If loginOperation.LoginSuccess Then
-                Me.parentWindow.DialogResult = True
+                _parentWindow.DialogResult = True
             ElseIf loginOperation.HasError Then
                 ErrorWindow.Show(loginOperation.Error)
                 loginOperation.MarkErrorAsHandled()
             ElseIf Not loginOperation.IsCanceled Then
-                Me.loginInfo.ValidationErrors.Add(New ValidationResult("Bad User Name Or Password", New String() {"UserName", "Password"}))
+                _loginInfo.ValidationErrors.Add(New ValidationResult("Bad User Name Or Password", New String() {"UserName", "Password"}))
             End If
 
         End Sub
@@ -87,7 +87,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' Switches to the registration form.
         ''' </summary>
         Private Sub RegisterNow_Click(sender As Object, e As RoutedEventArgs)
-            Me.parentWindow.NavigateToRegistration()
+            _parentWindow.NavigateToRegistration()
         End Sub
 
         ''' <summary>
@@ -96,10 +96,10 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' </summary>
         Private Sub CancelButton_Click(sender As Object, e As EventArgs)
 
-            If Me.loginInfo.CurrentLoginOperation IsNot Nothing AndAlso Me.loginInfo.CurrentLoginOperation.CanCancel Then
-                Me.loginInfo.CurrentLoginOperation.Cancel()
+            If _loginInfo.CurrentLoginOperation IsNot Nothing AndAlso _loginInfo.CurrentLoginOperation.CanCancel Then
+                _loginInfo.CurrentLoginOperation.Cancel()
             Else
-                Me.parentWindow.DialogResult = False
+                _parentWindow.DialogResult = False
             End If
 
         End Sub
@@ -120,7 +120,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' Sets focus to the user name text box.
         ''' </summary>
         Public Sub SetInitialFocus()
-            Me.userNameTextBox.Focus()
+            _userNameTextBox.Focus()
         End Sub
 
     End Class

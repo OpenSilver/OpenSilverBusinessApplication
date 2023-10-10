@@ -1,5 +1,4 @@
-﻿Imports System
-Imports System.Windows
+﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Shapes
 Imports System.Windows.Threading
@@ -70,7 +69,7 @@ Namespace OpenSilverBusinessApplication.Controls
         ''' </summary>
         Property ContentVisibility As Visibility
             Get
-                Return CType(GetValue(ContentVisibilityProperty),Visibility)
+                Return CType(GetValue(ContentVisibilityProperty), Visibility)
             End Get
             Set(value As Visibility)
                 SetValue(ContentVisibilityProperty, value)
@@ -91,7 +90,7 @@ Namespace OpenSilverBusinessApplication.Controls
         ''' </summary>
         Property IsBusy As Boolean
             Get
-                Return CType(GetValue(IsBusyProperty), Boolean)
+                Return GetValue(IsBusyProperty)
             End Get
             Set(value As Boolean)
                 SetValue(IsBusyProperty, value)
@@ -123,7 +122,7 @@ Namespace OpenSilverBusinessApplication.Controls
         Protected Overridable Sub OnIsBusyChanged(e As DependencyPropertyChangedEventArgs)
 
             If IsBusy Then
-                If DisplayAfter.Equals(TimeSpan.Zero)
+                If DisplayAfter.Equals(TimeSpan.Zero) Then
                     ' Go visible now
                     IsContentVisible = True
                 Else
@@ -151,13 +150,13 @@ Namespace OpenSilverBusinessApplication.Controls
                 SetValue(BusyContentProperty, value)
             End Set
         End Property
-        
+
         ''' <summary>
         ''' Identifies the BusyContent dependency property.
         ''' </summary>
         Public Shared ReadOnly BusyContentProperty As DependencyProperty = DependencyProperty.Register(
             "BusyContent",
-            GetType(object),
+            GetType(Object),
             GetType(BusyIndicator),
             New PropertyMetadata(Nothing))
 
@@ -208,7 +207,7 @@ Namespace OpenSilverBusinessApplication.Controls
         ''' </summary>
         Property OverlayStyle As Style
             Get
-                Return CType(GetValue(OverlayStyleProperty), Style) 
+                Return CType(GetValue(OverlayStyleProperty), Style)
             End Get
             Set(value As Style)
                 SetValue(OverlayStyleProperty, value)
@@ -234,7 +233,7 @@ Namespace OpenSilverBusinessApplication.Controls
             Set(value As Style)
                 SetValue(ProgressBarStyleProperty, value)
             End Set
-        End Property       
+        End Property
 
         ''' <summary>
         ''' Identifies the ProgressBarStyle dependency property.

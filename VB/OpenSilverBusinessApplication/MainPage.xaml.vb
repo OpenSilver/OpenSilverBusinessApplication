@@ -1,6 +1,7 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Navigation
+Imports OpenSilverBusinessApplication.Web
 
 Namespace OpenSilverBusinessApplication
 
@@ -12,10 +13,10 @@ Namespace OpenSilverBusinessApplication
         End Sub
 
         Private Sub ContentFrame_Navigated(sender As Object, e As NavigationEventArgs)
-        
+
             For Each child As UIElement In LinksStackPanel.Children
 
-                Dim hb As HyperlinkButton = CType(child, HyperlinkButton)
+                Dim hb As HyperlinkButton = TryCast(child, HyperlinkButton)
                 If hb IsNot Nothing AndAlso hb.NavigateUri IsNot Nothing Then
 
                     If hb.NavigateUri.ToString().Equals(e.Uri.ToString()) Then
@@ -24,9 +25,9 @@ Namespace OpenSilverBusinessApplication
                         VisualStateManager.GoToState(hb, "InactiveLink", True)
                     End If
 
-                End If 
+                End If
 
-            Next 
+            Next
 
         End Sub
 

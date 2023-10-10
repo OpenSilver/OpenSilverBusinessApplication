@@ -9,7 +9,7 @@ Namespace OpenSilverBusinessApplication.Web
     ''' This context extends the base to make application services and types available
     ''' for consumption from code and xaml.
     ''' </remarks>
-    Partial NotInheritable Class WebContext
+    Partial Public NotInheritable Class WebContext
         Inherits WebContextBase
 
 #Region "Extensibility Method Definitions"
@@ -38,7 +38,7 @@ Namespace OpenSilverBusinessApplication.Web
         ''' </exception>
         ''' <seealso cref="System.Windows.Application.ApplicationLifetimeObjects"/>
         ' TODO: Check if we can use Shadows
-        Shared Shadows ReadOnly Property Current As WebContext
+        Public Shared Shadows ReadOnly Property Current As WebContext
             Get
                 Return CType(WebContextBase.Current, WebContext)
             End Get

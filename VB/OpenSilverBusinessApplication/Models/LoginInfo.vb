@@ -62,7 +62,7 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' Gets and sets the value indicating whether the user's authentication information should be recorded for future logins.
         ''' </summary>
         <Display(Name:="Keep me signed in")>
-        Property RememberMe As Boolean
+        Public Property RememberMe As Boolean
             Get
                 Return Me._rememberMe
             End Get

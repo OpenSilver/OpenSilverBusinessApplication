@@ -3,9 +3,12 @@
     ''' <summary>
     ''' Names and helpers for visual states in the controls.
     ''' </summary>
-    Friend Shared Class VisualStates
+    Friend NotInheritable Class VisualStates
 
-        #Region "GroupBusyStatus"
+        Private Sub New()
+        End Sub
+
+#Region "GroupBusyStatus"
 
         ''' <summary>
         ''' Busy state for BusyIndicator.
@@ -22,9 +25,9 @@
         ''' </summary>
         Public Const GroupBusyStatus = "BusyStatusStates"
 
-        #End Region
+#End Region
 
-        #Region "GroupVisibility"
+#Region "GroupVisibility"
 
         ''' <summary>
         ''' Visible state name for BusyIndicator.
@@ -41,7 +44,7 @@
         ''' </summary>
         Public Const GroupVisibility = "VisibilityStates"
 
-        #End Region
+#End Region
 
     End Class
 

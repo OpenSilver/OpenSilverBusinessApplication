@@ -15,6 +15,7 @@
                 Return If(Not String.IsNullOrEmpty(Me.FriendlyName), Me.FriendlyName, Me.Name)
             End Get
         End Property
+
     End Class
 
 End Namespace

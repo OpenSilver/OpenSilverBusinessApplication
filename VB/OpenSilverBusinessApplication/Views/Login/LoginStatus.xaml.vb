@@ -1,10 +1,9 @@
-﻿Imports OpenRiaServices.DomainServices.Client.ApplicationServices
-Imports OpenSilverBusinessApplication.Web
-Imports OpenSilverBusinessApplication.Web.OpenSilverBusinessApplication.Web
-Imports System.ComponentModel
+﻿Imports System.ComponentModel
 Imports System.Globalization
 Imports System.Windows
 Imports System.Windows.Controls
+Imports OpenRiaServices.DomainServices.Client.ApplicationServices
+Imports OpenSilverBusinessApplication.Web
 
 Namespace OpenSilverBusinessApplication.LoginUI
 
@@ -37,14 +36,14 @@ Namespace OpenSilverBusinessApplication.LoginUI
         End Sub
 
         Private Sub LogoutButton_Click(sender As Object, e As RoutedEventArgs)
-            'WebContext.Current.Authentication.Logout(LogoutOperation >=
-            '{
-            '    If(LogoutOperation.HasError)
-            '    {
-            '        ErrorWindow.Show(logoutOperation.Error)
-            'logoutOperation.MarkErrorAsHandled()
-            '    }
-            '}, /* userState */ null)
+            WebContext.Current.Authentication.Logout(AddressOf Me.HandleLogoutOperationErrors, Nothing)
+        End Sub
+
+        Private Sub HandleLogoutOperationErrors(ByVal logoutOperation As LogoutOperation)
+            If logoutOperation.HasError Then
+                ErrorWindow.Show(logoutOperation.Error)
+                logoutOperation.MarkErrorAsHandled()
+            End If
         End Sub
 
         Private Sub Authentication_LoggedIn(sender As Object, e As AuthenticationEventArgs)

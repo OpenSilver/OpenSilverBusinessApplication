@@ -148,7 +148,7 @@ namespace OpenSilverBusinessApplication.Controls
         /// </summary>
         public object BusyContent
         {
-            get { return (object)GetValue(BusyContentProperty); }
+            get { return GetValue(BusyContentProperty); }
             set { SetValue(BusyContentProperty, value); }
         }
 

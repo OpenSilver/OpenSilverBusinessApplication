@@ -12,7 +12,7 @@ Namespace OpenSilverBusinessApplication.Web
         ''' </summary>
         <Required(ErrorMessage:="This field is required")>
         <Display(Order:=0, Name:="User name")>
-        <RegularExpression("^<a-zA-Z0-9_>*$", ErrorMessage:="Invalid user name. It must contain only alphanumeric characters")>
+        <RegularExpression("^[a-zA-Z0-9_]*$", ErrorMessage:="Invalid user name. It must contain only alphanumeric characters")>
         <StringLength(255, MinimumLength:=4, ErrorMessage:="The user name must be at least 4 and at most 255 characters long")>
         Public Property UserName As String
 
@@ -21,7 +21,7 @@ Namespace OpenSilverBusinessApplication.Web
         ''' </summary>
         <Required(ErrorMessage:="This field is required")>
         <Display(Order:=2, Name:="Email")>
-        <RegularExpression("^(<\w-\.>+)@((\<<0-9>{1,3}\.<0-9>{1,3}\.<0-9>{1,3}\.)|((<\w->+\.)+))(<a-zA-Z>{2,4}|<0-9>{1,3})(\>?)$",
+        <RegularExpression("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$",
                            ErrorMessage:="Invalid email. An email must use the format user@company.com")>
         Public Property Email As String
 
@@ -46,7 +46,7 @@ Namespace OpenSilverBusinessApplication.Web
         <Display(Order:=6, Name:="Security answer")>
         <StringLength(128, ErrorMessage:="The security answer cannot be more than 128 characters long")>
         Public Property Answer As String
-        
+
     End Class
-    
+
 End Namespace

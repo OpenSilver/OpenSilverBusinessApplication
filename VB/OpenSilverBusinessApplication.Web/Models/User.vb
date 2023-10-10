@@ -17,6 +17,7 @@ Namespace OpenSilverBusinessApplication.Web
         ''' Gets and sets the friendly name of the user.
         ''' </summary>
         Public Property FriendlyName As String
+
     End Class
 
 End Namespace

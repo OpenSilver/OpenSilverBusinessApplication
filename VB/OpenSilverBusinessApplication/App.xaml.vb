@@ -6,9 +6,7 @@ Imports OpenSilverBusinessApplication.Web
 
 #End If
 
-Imports System
 Imports System.Windows
-Imports System.Windows.Controls
 
 Namespace OpenSilverBusinessApplication
 
@@ -23,7 +21,7 @@ Namespace OpenSilverBusinessApplication
             InitializeComponent()
 
             Dim webContext As WebContext = New WebContext()
-            webContext.Authentication = new FormsAuthentication()
+            webContext.Authentication = New FormsAuthentication()
             'webContext.Authentication = New WindowsAuthentication()
             Me.ApplicationLifetimeObjects.Add(webContext)
 
@@ -59,7 +57,7 @@ Namespace OpenSilverBusinessApplication
         Private Sub Application_UnhandledException(sender As Object, e As ApplicationUnhandledExceptionEventArgs)
 
             If Not System.Diagnostics.Debugger.IsAttached Then
-                e.Handled = true
+                e.Handled = True
                 ErrorWindow.Show(e.ExceptionObject)
             End If
 

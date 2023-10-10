@@ -17,8 +17,8 @@ Namespace OpenSilverBusinessApplication.Web
     ''' Most of the functionality is already provided by the AuthenticationBase class.
     ''' </summary>
     <EnableClientAccess>
-    Class AuthenticationService
+    Public Class AuthenticationService
         Inherits AuthenticationBase(Of User)
     End Class
-   
+
 End Namespace

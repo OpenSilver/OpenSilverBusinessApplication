@@ -1,9 +1,9 @@
-﻿Imports OpenRiaServices.DomainServices.Hosting
-Imports OpenRiaServices.DomainServices.Server
-Imports System
+﻿Imports System
 Imports System.ComponentModel.DataAnnotations
 Imports System.Web.Profile
 Imports System.Web.Security
+Imports OpenRiaServices.DomainServices.Hosting
+Imports OpenRiaServices.DomainServices.Server
 
 Namespace OpenSilverBusinessApplication.Web
 
@@ -78,7 +78,7 @@ Namespace OpenSilverBusinessApplication.Web
         End Function
 
         Private Shared Function ConvertStatus(createStatus As MembershipCreateStatus) As CreateUserStatus
-        
+
             Select Case createStatus
                 Case MembershipCreateStatus.Success
                     Return CreateUserStatus.Success
@@ -118,5 +118,5 @@ Namespace OpenSilverBusinessApplication.Web
         DuplicateEmail = 7
         Failure = 8
     End Enum
-    
+
 End Namespace
