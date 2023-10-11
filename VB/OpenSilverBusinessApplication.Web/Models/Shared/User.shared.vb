@@ -1,4 +1,4 @@
-﻿Namespace OpenSilverBusinessApplication.Web
+﻿Namespace Global.OpenSilverBusinessApplication.Web
 
     ''' <summary>
     ''' Partial class extending the User type that adds shared properties and methods.
