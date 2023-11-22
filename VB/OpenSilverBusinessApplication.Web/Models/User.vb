@@ -16,4 +16,7 @@ Partial Public Class User
     ''' </summary>
     Public Property FriendlyName As String
 
+    Public Property PasswordAnswer As String
+    Public Property PasswordQuestion As String
+
 End Class

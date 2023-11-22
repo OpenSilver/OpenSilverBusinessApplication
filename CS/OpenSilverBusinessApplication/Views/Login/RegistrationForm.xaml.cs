@@ -3,7 +3,7 @@ using OpenRiaServices.DomainServices.Client.ApplicationServices;
 using OpenSilverBusinessApplication.Web;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -129,7 +129,7 @@ namespace OpenSilverBusinessApplication.LoginUI
         /// If there was an error, an <see cref="ErrorWindow"/> is displayed to the user.
         /// Otherwise, this triggers a login operation that will automatically log in the just registered user.
         /// </summary>
-        private void RegistrationOperation_Completed(InvokeOperation<CreateUserStatus> operation)
+        private void RegistrationOperation_Completed(InvokeOperation<IEnumerable<string>> operation)
         {
             if (!operation.IsCanceled)
             {
@@ -138,26 +138,15 @@ namespace OpenSilverBusinessApplication.LoginUI
                     ErrorWindow.Show(operation.Error);
                     operation.MarkErrorAsHandled();
                 }
-                else if (operation.Value == CreateUserStatus.Success)
+                else if (!operation.Value.Any())
                 {
                     this.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(this.registrationData.ToLoginParameters(), this.LoginOperation_Completed, null);
                     this.parentWindow.AddPendingOperation(this.registrationData.CurrentOperation);
                 }
-                else if (operation.Value == CreateUserStatus.DuplicateUserName)
-                {
-                    this.registrationData.ValidationErrors.Add(
-                        new ValidationResult("User name already exists. Please enter a different user name.",
-                        new string[] { "UserName" }));
-                }
-                else if (operation.Value == CreateUserStatus.DuplicateEmail)
-                {
-                    this.registrationData.ValidationErrors.Add(
-                        new ValidationResult("A user name for that e-mail address already exists. Please enter a different e-mail address.",
-                        new string[] { "Email" }));
-                }
                 else
                 {
-                    ErrorWindow.Show("An unknown error has occurred. Please contact your administrator for help.");
+                    ErrorWindow.Show("Errors have occurred:",
+                        string.Join(Environment.NewLine, operation.Value.Select(e => $"- {e}")));
                 }
             }
         }

@@ -1,5 +1,4 @@
-﻿Imports System.ComponentModel.DataAnnotations
-Imports System.Windows
+﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports OpenRiaServices.DomainServices.Client
@@ -121,31 +120,20 @@ Namespace OpenSilverBusinessApplication.LoginUI
         ''' If there was an error, an <see cref="ErrorWindow"/> is displayed to the user.
         ''' Otherwise, this triggers a login operation that will automatically log in the just registered user.
         ''' </summary>
-        Private Sub RegistrationOperation_Completed(operation As InvokeOperation(Of CreateUserStatus))
+        Private Sub RegistrationOperation_Completed(operation As InvokeOperation(Of IEnumerable(Of String)))
 
             If Not operation.IsCanceled Then
 
                 If operation.HasError Then
                     ErrorWindow.Show(operation.Error)
                     operation.MarkErrorAsHandled()
-                    Return
+                ElseIf Not operation.Value.Any() Then
+                    Me.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(Me.registrationData.ToLoginParameters(), AddressOf Me.LoginOperation_Completed, Nothing)
+                    Me.parentWindow.AddPendingOperation(Me.registrationData.CurrentOperation)
+                Else
+                    ErrorWindow.Show("Errors have occurred:",
+                        String.Join(vbCrLf, operation.Value.Select(Function(e) $"- {e}")))
                 End If
-
-                Select Case operation.Value
-                    Case CreateUserStatus.Success
-                        Me.registrationData.CurrentOperation = WebContext.Current.Authentication.Login(Me.registrationData.ToLoginParameters(), AddressOf Me.LoginOperation_Completed, Nothing)
-                        Me.parentWindow.AddPendingOperation(Me.registrationData.CurrentOperation)
-                    Case CreateUserStatus.DuplicateUserName
-                        Me.registrationData.ValidationErrors.Add(
-                            New ValidationResult("User name already exists. Please enter a different user name.",
-                            New String() {"UserName"}))
-                    Case CreateUserStatus.DuplicateEmail
-                        Me.registrationData.ValidationErrors.Add(
-                            New ValidationResult("A user name for that e-mail address already exists. Please enter a different e-mail address.",
-                            New String() {"Email"}))
-                    Case Else
-                        ErrorWindow.Show("An unknown error has occurred. Please contact your administrator for help.")
-                End Select
 
             End If
 

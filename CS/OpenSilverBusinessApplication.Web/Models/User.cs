@@ -16,5 +16,8 @@ namespace OpenSilverBusinessApplication.Web
         /// Gets and sets the friendly name of the user.
         /// </summary>
         public string FriendlyName { get; set; }
+
+        public string PasswordAnswer { get; set; }
+        public string PasswordQuestion { get; set; }
     }
 }

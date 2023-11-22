@@ -8,7 +8,6 @@ using OpenSilverBusinessApplication.Web;
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace OpenSilverBusinessApplication
 {
@@ -22,13 +21,15 @@ namespace OpenSilverBusinessApplication
             InitializeComponent();
 
             WebContext webContext = new WebContext();
-            webContext.Authentication = new FormsAuthentication();
-            //webContext.Authentication = new WindowsAuthentication();
             this.ApplicationLifetimeObjects.Add(webContext);
 
-#if OPENSILVER
-            ((DomainClientFactory)DomainContext.DomainClientFactory).ServerBaseUri = new Uri("http://localhost:54837/");
-#endif
+            ((DomainClientFactory)DomainContext.DomainClientFactory).ServerBaseUri = new Uri("http://localhost:54837/", UriKind.Absolute);
+
+            //webContext.Authentication = new WindowsAuthentication();
+            webContext.Authentication = new FormsAuthentication()
+            {
+                DomainContext = new AuthenticationContext()
+            };
         }
 
         private void Application_Startup(object sender, StartupEventArgs e)

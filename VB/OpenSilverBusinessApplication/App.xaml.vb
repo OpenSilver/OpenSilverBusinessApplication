@@ -21,14 +21,14 @@ Namespace OpenSilverBusinessApplication
             InitializeComponent()
 
             Dim webContext As WebContext = New WebContext()
-            webContext.Authentication = New FormsAuthentication()
-            'webContext.Authentication = New WindowsAuthentication()
             Me.ApplicationLifetimeObjects.Add(webContext)
 
-#If OPENSILVER Then
             Dim domainClientFactory = CType(DomainContext.DomainClientFactory, DomainClientFactory)
             domainClientFactory.ServerBaseUri = New Uri("http://localhost:54837/")
-#End If
+
+            webContext.Authentication = New FormsAuthentication() With {.DomainContext = New AuthenticationContext()}
+            'webContext.Authentication = New WindowsAuthentication()
+
         End Sub
 
         Private Sub Application_Startup(sender As Object, e As StartupEventArgs)

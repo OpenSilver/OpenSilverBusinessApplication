@@ -1,9 +1,13 @@
-﻿using OpenRiaServices.DomainServices.Hosting;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using OpenRiaServices.DomainServices.Hosting;
 using OpenRiaServices.DomainServices.Server;
+using OpenSilverBusinessApplication.Web.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Web.Profile;
-using System.Web.Security;
+using System.Linq;
+using System.Web;
 
 namespace OpenSilverBusinessApplication.Web
 {
@@ -21,10 +25,7 @@ namespace OpenSilverBusinessApplication.Web
     [EnableClientAccess]
     public class UserRegistrationService : DomainService
     {
-        /// <summary>
-        /// Role to which users will be added by default.
-        /// </summary>
-        public const string DefaultRole = "Registered Users";
+        public ApplicationUserManager UserManager => HttpContext.Current.GetOwinContext().GetUserManager<ApplicationUserManager>();
 
         //// NOTE: This is a sample code to get your application started.
         ////       In the production code you should provide a mitigation against a denial of service attack
@@ -36,7 +37,7 @@ namespace OpenSilverBusinessApplication.Web
         /// <param name="user">The registration information for this user.</param>
         /// <param name="password">The password for the new user.</param>
         [Invoke(HasSideEffects = true)]
-        public CreateUserStatus CreateUser(RegistrationData user,
+        public IEnumerable<string> CreateUser(RegistrationData user,
             [Required(ErrorMessage = "This field is required")]
             [RegularExpression("^.*[^a-zA-Z0-9].*$", ErrorMessage = "A password needs to contain at least one special character e.g. @ or #")]
             [StringLength(50, MinimumLength = 7, ErrorMessage = "Password must be at least 7 and at most 50 characters long")]
@@ -44,70 +45,26 @@ namespace OpenSilverBusinessApplication.Web
         {
             if (user == null)
             {
-                throw new ArgumentNullException("user");
+                throw new ArgumentNullException(nameof(user));
             }
 
-            // Run this BEFORE creating the user to make sure roles are enabled and the default role is available.
-            //
-            // If there is a problem with the role manager, it is better to fail now than to fail after the user is created.
-            if (!Roles.RoleExists(UserRegistrationService.DefaultRole))
+            var appUser = new ApplicationUser()
             {
-                Roles.CreateRole(UserRegistrationService.DefaultRole);
-            }
+                UserName = user.UserName,
+                Email = user.Email,
+                FriendlyName = user.FriendlyName,
+                PasswordQuestion = user.Question,
+                PasswordAnswer = UserManager.PasswordHasher.HashPassword(user.Answer)
+            };
 
-            // NOTE: ASP.NET by default uses SQL Server Express to create the user database.
-            // CreateUser will fail if you do not have SQL Server Express installed.
-            MembershipCreateStatus createStatus;
-            Membership.CreateUser(user.UserName, password, user.Email, user.Question, user.Answer, true, null, out createStatus);
+            var result = UserManager.Create(appUser, password);
 
-            if (createStatus != MembershipCreateStatus.Success)
+            if (!result.Succeeded)
             {
-                return UserRegistrationService.ConvertStatus(createStatus);
+                return result.Errors;
             }
 
-            // Assign the user to the default role.
-            // This will fail if role management is disabled.
-            Roles.AddUserToRole(user.UserName, UserRegistrationService.DefaultRole);
-
-            // Set the friendly name (profile setting).
-            // This will fail if the web.config is configured incorrectly.
-            ProfileBase profile = ProfileBase.Create(user.UserName, true);
-            profile.SetPropertyValue("FriendlyName", user.FriendlyName);
-            profile.Save();
-
-            return CreateUserStatus.Success;
+            return Enumerable.Empty<string>();
         }
-
-        private static CreateUserStatus ConvertStatus(MembershipCreateStatus createStatus)
-        {
-            switch (createStatus)
-            {
-                case MembershipCreateStatus.Success: return CreateUserStatus.Success;
-                case MembershipCreateStatus.InvalidUserName: return CreateUserStatus.InvalidUserName;
-                case MembershipCreateStatus.InvalidPassword: return CreateUserStatus.InvalidPassword;
-                case MembershipCreateStatus.InvalidQuestion: return CreateUserStatus.InvalidQuestion;
-                case MembershipCreateStatus.InvalidAnswer: return CreateUserStatus.InvalidAnswer;
-                case MembershipCreateStatus.InvalidEmail: return CreateUserStatus.InvalidEmail;
-                case MembershipCreateStatus.DuplicateUserName: return CreateUserStatus.DuplicateUserName;
-                case MembershipCreateStatus.DuplicateEmail: return CreateUserStatus.DuplicateEmail;
-                default: return CreateUserStatus.Failure;
-            }
-        }
-    }
-
-    /// <summary>
-    /// An enumeration of the values that can be returned from <see cref="UserRegistrationService.CreateUser"/>
-    /// </summary>
-    public enum CreateUserStatus
-    {
-        Success = 0,
-        InvalidUserName = 1,
-        InvalidPassword = 2,
-        InvalidQuestion = 3,
-        InvalidAnswer = 4,
-        InvalidEmail = 5,
-        DuplicateUserName = 6,
-        DuplicateEmail = 7,
-        Failure = 8,
     }
 }

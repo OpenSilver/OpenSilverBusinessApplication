@@ -1,7 +1,10 @@
 ﻿Imports System
+Imports System.Collections.Generic
 Imports System.ComponentModel.DataAnnotations
-Imports System.Web.Profile
-Imports System.Web.Security
+Imports System.Linq
+Imports System.Web
+Imports Microsoft.AspNet.Identity
+Imports Microsoft.AspNet.Identity.Owin
 Imports OpenRiaServices.DomainServices.Hosting
 Imports OpenRiaServices.DomainServices.Server
 
@@ -20,10 +23,7 @@ Imports OpenRiaServices.DomainServices.Server
 Public Class UserRegistrationService
     Inherits DomainService
 
-    ''' <summary>
-    ''' Role to which users will be added by default.
-    ''' </summary>
-    Public Const DefaultRole As String = "Registered Users"
+    Public ReadOnly Property UserManager As ApplicationUserManager = HttpContext.Current.GetOwinContext().GetUserManager(Of ApplicationUserManager)()
 
     ' NOTE: This is a sample code to get your application started.
     '       In the production code you should provide a mitigation against a denial of service attack
@@ -39,80 +39,29 @@ Public Class UserRegistrationService
         <Required(ErrorMessage:="This field is required")>
         <RegularExpression("^.*[^a-zA-Z0-9].*$", ErrorMessage:="A password needs to contain at least one special character e.g. @ or #")>
         <StringLength(50, MinimumLength:=7, ErrorMessage:="Password must be at least 7 and at most 50 characters long")>
-        password As String) As CreateUserStatus
+        password As String) As IEnumerable(Of String)
 
         If user Is Nothing Then
             Throw New ArgumentNullException("user")
         End If
 
-        ' Run this BEFORE creating the user to make sure roles are enabled and the default role is available.
-        '
-        ' If there is a problem with the role manager, it is better to fail now than to fail after the user is created.
-        If Not Roles.RoleExists(UserRegistrationService.DefaultRole) Then
-            Roles.CreateRole(UserRegistrationService.DefaultRole)
+        Dim appUser As New ApplicationUser()
+        With appUser
+            .UserName = user.UserName
+            .Email = user.Email
+            .FriendlyName = user.FriendlyName
+            .PasswordQuestion = user.Question
+            .PasswordAnswer = UserManager.PasswordHasher.HashPassword(user.Answer)
+        End With
+
+        Dim result As IdentityResult = UserManager.Create(appUser, password)
+
+        If Not result.Succeeded Then
+            Return result.Errors
         End If
 
-        ' NOTE: ASP.NET by default uses SQL Server Express to create the user database.
-        ' CreateUser will fail if you do not have SQL Server Express installed.
-        Dim createStatus As MembershipCreateStatus = Nothing
-        Membership.CreateUser(user.UserName, password, user.Email, user.Question, user.Answer, True, Nothing, createStatus)
-
-        If createStatus <> MembershipCreateStatus.Success Then
-            Return UserRegistrationService.ConvertStatus(createStatus)
-        End If
-
-        ' Assign the user to the default role.
-        ' This will fail if role management is disabled.
-        Roles.AddUserToRole(user.UserName, UserRegistrationService.DefaultRole)
-
-        ' Set the friendly name (profile setting).
-        ' This will fail if the web.config is configured incorrectly.
-        Dim profile As ProfileBase = ProfileBase.Create(user.UserName, True)
-        profile.SetPropertyValue("FriendlyName", user.FriendlyName)
-        profile.Save()
-
-        Return CreateUserStatus.Success
-
-    End Function
-
-    Private Shared Function ConvertStatus(createStatus As MembershipCreateStatus) As CreateUserStatus
-
-        Select Case createStatus
-            Case MembershipCreateStatus.Success
-                Return CreateUserStatus.Success
-            Case MembershipCreateStatus.InvalidUserName
-                Return CreateUserStatus.InvalidUserName
-            Case MembershipCreateStatus.InvalidPassword
-                Return CreateUserStatus.InvalidPassword
-            Case MembershipCreateStatus.InvalidQuestion
-                Return CreateUserStatus.InvalidQuestion
-            Case MembershipCreateStatus.InvalidAnswer
-                Return CreateUserStatus.InvalidAnswer
-            Case MembershipCreateStatus.InvalidEmail
-                Return CreateUserStatus.InvalidEmail
-            Case MembershipCreateStatus.DuplicateUserName
-                Return CreateUserStatus.DuplicateUserName
-            Case MembershipCreateStatus.DuplicateEmail
-                Return CreateUserStatus.DuplicateEmail
-            Case Else
-                Return CreateUserStatus.Failure
-        End Select
+        Return Enumerable.Empty(Of String)
 
     End Function
 
 End Class
-
-''' <summary>
-''' An enumeration of the values that can be returned from <see cref="UserRegistrationService.CreateUser"/>
-''' </summary>
-Public Enum CreateUserStatus
-    Success = 0
-    InvalidUserName = 1
-    InvalidPassword = 2
-    InvalidQuestion = 3
-    InvalidAnswer = 4
-    InvalidEmail = 5
-    DuplicateUserName = 6
-    DuplicateEmail = 7
-    Failure = 8
-End Enum
