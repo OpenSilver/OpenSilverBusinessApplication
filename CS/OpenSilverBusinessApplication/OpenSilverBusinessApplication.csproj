@@ -25,7 +25,6 @@
   
   <ItemGroup>
     <None Remove="Assets\Styles.xaml" />
-    <None Remove="Controls\BusyIndicator.xaml" />
     <None Remove="EmptyOpenSilverMigrationApplication.csproj.vspscc" />
     <None Remove="MyTemplate_rename_me_after_export.vstemplate" />
     <None Remove="Views\About.xaml" />
@@ -39,9 +38,6 @@
 
   <ItemGroup>
     <Content Include="Assets\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Content>
-    <Content Include="Controls\BusyIndicator.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Content>
     <Content Include="MainPage.xaml">
