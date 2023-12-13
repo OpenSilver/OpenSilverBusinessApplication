@@ -8,7 +8,6 @@ using OpenSilverBusinessApplication.Web;
 
 using System;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace OpenSilverBusinessApplication
 {
@@ -57,11 +56,8 @@ namespace OpenSilverBusinessApplication
 
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-            if (!System.Diagnostics.Debugger.IsAttached)
-            {
-                e.Handled = true;
-                ErrorWindow.Show(e.ExceptionObject);
-            }
+            e.Handled = true;
+            ErrorWindow.Show(e.ExceptionObject);
         }
     }
 }
