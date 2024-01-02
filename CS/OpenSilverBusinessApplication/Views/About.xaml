@@ -6,7 +6,11 @@
                  xmlns:navigation="clr-namespace:System.Windows.Controls;assembly=OpenSilver.Controls.Navigation"
                  mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="480"
                  Style="{StaticResource PageStyle}">
-    <StackPanel>
+    <StackPanel HorizontalAlignment="Left">
         <TextBlock Text="About" Style="{StaticResource HeaderTextStyle}" />
+        <Button Content="Open" Width="100" Click="Button_Click" />
+        <Button Content="Secure" Width="100" Click="Button_Click_1" />
+        <TextBlock Text="Result:" />
+        <TextBlock x:Name="tbResult" />
     </StackPanel>
 </navigation:Page>

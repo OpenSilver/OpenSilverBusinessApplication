@@ -1,5 +1,8 @@
 ﻿using OpenRiaServices.DomainServices.Hosting;
 using OpenRiaServices.DomainServices.Server.ApplicationServices;
+using System.Security.Principal;
+using System.Web.Security;
+using System.Web;
 
 namespace OpenSilverBusinessApplication.Web
 {
@@ -18,5 +21,20 @@ namespace OpenSilverBusinessApplication.Web
     /// </summary>
     [EnableClientAccess]
     public class AuthenticationService : AuthenticationBase<User>
-    { }
+    {
+        protected override void IssueAuthenticationToken(IPrincipal principal, bool isPersistent)
+        {
+            var ticket = new FormsAuthenticationTicket(principal.Identity.Name, isPersistent, 30);
+
+            var encryptedTicket = FormsAuthentication.Encrypt(ticket);
+
+            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+
+            authCookie.Secure = true;
+            authCookie.SameSite = SameSiteMode.None;
+            authCookie.HttpOnly = true; // testing for true or false yet
+
+            HttpContext.Current.Response.Cookies.Add(authCookie);
+        }
+    }
 }

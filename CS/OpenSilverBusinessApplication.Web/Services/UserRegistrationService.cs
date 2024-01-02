@@ -21,6 +21,19 @@ namespace OpenSilverBusinessApplication.Web
     [EnableClientAccess]
     public class UserRegistrationService : DomainService
     {
+        [Invoke()]
+        public DateTime OpenEndPoint()
+        {
+            return DateTime.Now;
+        }
+
+        [Invoke()]
+        [RequiresAuthentication]
+        public DateTime SecureEndPoint()
+        {
+            return DateTime.Now;
+        }
+
         /// <summary>
         /// Role to which users will be added by default.
         /// </summary>
