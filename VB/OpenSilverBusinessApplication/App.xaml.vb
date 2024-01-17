@@ -2,7 +2,9 @@
 
 Imports OpenRiaServices.DomainServices.Client
 Imports OpenRiaServices.DomainServices.Client.ApplicationServices
+Imports OpenRiaServices.DomainServices.Client.Web
 Imports OpenSilverBusinessApplication.Web
+Imports System.Net
 
 #End If
 
@@ -15,6 +17,8 @@ Namespace OpenSilverBusinessApplication
 
         Public Sub New()
 
+            Current.Host.Settings.DefaultSoapCredentialsMode = CredentialsMode.Enabled
+
             AddHandler Me.Startup, AddressOf Me.Application_Startup
             AddHandler Me.UnhandledException, AddressOf Me.Application_UnhandledException
 
@@ -26,8 +30,10 @@ Namespace OpenSilverBusinessApplication
             Me.ApplicationLifetimeObjects.Add(webContext)
 
 #If OPENSILVER Then
-            Dim domainClientFactory = CType(DomainContext.DomainClientFactory, DomainClientFactory)
-            domainClientFactory.ServerBaseUri = New Uri("http://localhost:54837/")
+            DomainContext.DomainClientFactory = New WebAssemblySoapDomainClientFactory() With
+            {
+                .ServerBaseUri = New Uri("https://localhost:44349/")
+            }
 #End If
         End Sub
 
